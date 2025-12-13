@@ -55,21 +55,48 @@ def bard(item: Item):
 
 @app.post("/ai/chatgpt")
 def chatgpt(item: Item):
-    print(item)
-    sentence = item.sentence
+    # print(item)
     prompt = item.prompt
-    model = item.model
-    response = chatGpt.call('jkj', model, sentence, prompt)
+
+    if not is_image_request(prompt):
+        message = generate_answer(item) # 텍스트 처리.
+        res_type = 1
+    else:
+        message = generate_images(item) # 이미지 처리.
+        res_type = 2
+
+    response = {'message' : message, 'type' : res_type}
 
     return response
+
+def is_image_request(text):
+    keywords = ["이미지", "그림", "그려줘", "사진", "image", "draw", "illustration"]
+    return any(k in text.lower() for k in keywords)
+
 
 @app.post("/ai/chatgpt/generate_image")
-def generate_image(item: Item):
+def generate_answer(item: Item):
     prompt = item.prompt
-    # model = item.model
-    response = chatGpt.generate_image('jkj', None, prompt)
+    response = chatGpt.generate_answer('jkj', None, prompt)
 
     return response
+
+
+@app.post("/ai/chatgpt/generate_image")
+def generate_images(item: Item):
+    prompt = item.prompt
+    response = chatGpt.generate_images('jkj', None, prompt)
+
+    return response
+
+
+# @app.post("/ai/chatgpt/generate_image")
+# def generate_image(item: Item):
+#     prompt = item.prompt
+#     # model = item.model
+#     response = chatGpt.generate_image('jkj', None, prompt)
+#
+#     return response
 
 
 @app.post("/ai/chatgpt/stt")
@@ -86,14 +113,14 @@ def tts():
     response = chatGpt.text_to_speech('안녕하세요 반값습니다.')
     return response
 
-IMAGE_DIR = Path("images")
+IMAGE_DIR = Path('D:\\source\\workspace_pycharm\\cloutty_api\\images')
 
 @app.get("/images/{image_name}")
 async def image(image_name: str):
     image_path = IMAGE_DIR / image_name
-    current_dir = os.getcwd()
-    print(current_dir)
-    print(image_path)
+    # current_dir = os.getcwd()
+    # print(current_dir)
+    # print(image_path)
 
     if image_path.exists():
         return FileResponse(image_path)

@@ -7,7 +7,7 @@ import time
 import base64
 import uuid
 
-os.environ['OPEN_API_KEY'] = ''
+# os.environ['OPEN_API_KEY'] = ''
 
 User = Query()
 db = TinyDB('gtp.json')
@@ -32,7 +32,7 @@ def insert_history(user_id, data) :
     db.insert(data)
 
 
-def call(user_id ,model, sentence, prompt):
+def generate_answer(user_id ,model, prompt):
     client = OpenAI(api_key=os.environ.get('OPEN_API_KEY'), http_client=httpx.Client(verify=False))
 
     # client = OpenAI(base_url= 'http://3.39.219.244:9300',
@@ -47,8 +47,8 @@ def call(user_id ,model, sentence, prompt):
         model = 'gpt-4o-mini'
         #model = 'gpt-3.5-turbo'
 
-    print('## 문장 ##')
-    print(sentence + '\n')
+    # print('## 문장 ##')
+    # print(sentence + '\n')
 
     print('## 질문 ##')
     print(prompt   + '\n')
@@ -87,6 +87,34 @@ def call(user_id ,model, sentence, prompt):
 
     return content
 
+def generate_images(user_id ,model, prompt) :
+    # client = OpenAI(api_key=os.environ.get('OPEN_API_KEY'), http_client=httpx.Client(verify=False))
+    #
+    # if not model:
+    #     model = 'dall-e-3'
+    #     # model = 'gpt-image-1'
+    #
+    # response = client.images.generate(
+    #     model  = model,  # 또는 "dall-e-3"
+    #     prompt = prompt,
+    #     size   = "1024x1024",
+    #     response_format="b64_json"
+    # )
+    #
+    # image_base64 = response.data[0].b64_json
+    # decode_bytes = base64.b64decode(image_base64)
+
+    # file_id = uuid.uuid4()
+    file_id = 'result'
+    file_nm = str(file_id) + '.png'
+
+    # with open(file_nm, "wb") as f:
+    #     f.write(decode_bytes)
+
+    url = "http://127.0.0.1:9999/images/" + file_nm
+
+    return url
+
 
 def speech_to_text(path) :
     text = ''
@@ -117,31 +145,6 @@ def text_to_speech(text) :
     with open(path, 'wb') as f:
         f.write(speech.read())
 
-def generate_image(user_id ,model, prompt) :
-    # client = OpenAI(api_key=os.environ.get('OPEN_API_KEY'), http_client=httpx.Client(verify=False))
-    #
-    # if not model:
-    #     model = 'dall-e-3'
-    #     # model = 'gpt-image-1'
-    #
-    # response = client.images.generate(
-    #     model  = model,  # 또는 "dall-e-3"
-    #     prompt = prompt,
-    #     size   = "1024x1024",
-    #     response_format="b64_json"
-    # )
-    #
-    # image_base64 = response.data[0].b64_json
-    # decode_bytes = base64.b64decode(image_base64)
-
-    # file_id = uuid.uuid4()
-    file_id = 'result'
-    file_nm = str(file_id) + '.png'
-
-    # with open(file_nm, "wb") as f:
-    #     f.write(decode_bytes)
-
-    return file_nm
 
 
 async def upload(request) :
