@@ -73,14 +73,11 @@ def is_image_request(text):
     keywords = ["이미지", "그림", "그려줘", "사진", "image", "draw", "illustration"]
     return any(k in text.lower() for k in keywords)
 
-
-@app.post("/ai/chatgpt/generate_image")
 def generate_answer(item: Item):
     prompt = item.prompt
     response = chatGpt.generate_answer('jkj', None, prompt)
 
     return response
-
 
 @app.post("/ai/chatgpt/generate_image")
 def generate_images(item: Item):

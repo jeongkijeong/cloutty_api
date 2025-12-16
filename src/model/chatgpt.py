@@ -4,10 +4,9 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 import os
 import time
-import base64
-import uuid
+import config.config as config
 
-# os.environ['OPEN_API_KEY'] = ''
+os.environ['OPEN_API_KEY'] = config.openai_key
 
 User = Query()
 db = TinyDB('gtp.json')
